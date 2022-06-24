@@ -27,3 +27,19 @@ Back-end plan Wednesday
 
 # Continue making some tests
 
+
+
+# EXTENSION
+
+- Allow multi-variable GET requests
+
+- Make POST, PUT and DELETE routes
+
+- Make another table to store the email requests
+
+- Make routes for these requests
+
+- Generalise code to account for many filters
+
+- Unit tests on the routes
+

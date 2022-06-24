@@ -3,20 +3,18 @@ import {getProfiles, getProfilesByRegion, getProfilesByName, getProfilesByBootca
 const router = express.Router();
 
 router.get("/", async function (req, res) {
+    const result = {};
     if (req.query.region !== undefined) {
-        const result = await getProfilesByRegion(req.query.region);
-        return res.json({ success: true, payload: result })
+        result = await getProfilesByRegion(req.query.region);
     } else if(req.query.name){
-        const result = await getProfilesByName(req.query.name);
-        return res.json({ success: true, payload: result })
+        result = await getProfilesByName(req.query.name);
     } else if(req.query.Bootcampnumber){
         const setToNum = req.query.Bootcampnumber*1;
-        const result = await getProfilesByBootcamp(setToNum);
-        return res.json({ success: true, payload: result })
+        result = await getProfilesByBootcamp(setToNum);
     } else {
-        let response = await getProfiles();
-        res.json({success: true, payload: response});
+        result = await getProfiles();
     }
+    return res.json({ success: true, payload: result })
 });
 
 
