@@ -1,22 +1,45 @@
-# National Bootcamp - Week Nine Project Brief
+Back end installation
 
-For your project, you’ll be using what you’ve learned on the course so far to try and improve the lives of your users. In this case, the users will be close to home: bootcampers!
 
-To do this, you’ll need to take the time to understand your user (a bootcamper), their experiences, and their problems. Specifically, it might be good to focus on how to enhance the remote experience of a bootcamper, or what can help them with the vast amount of learning there is to do as a new developer. What do they need? What problem might they have that your application could solve for them? How can you get into the mindset of your user and keep them at the centre of your problem-solving?
+<p style="color:red"> This may be unfinished or irrelevant for newer features. Please refer to the readme on the w9_frontend-project-room-21-1 for regularly updated documentation </p>
 
-The high level outcomes from this project should be:
 
-- A minimum viable product (MVP) showcasing an innovative full stack application which meets the user need you’ve identified
-- A presentation, complete with how you worked as a team and a demonstration of the project
+# .Class server
 
-Your project application might include the following:
+This is designed to be the backend to power the frontend: w9_frontend-project-room-22-1.
 
-- Include a user experience created in React
-- Build a REST API which is used by your front-end
-- Be supported by a Postgresql database with multiple tables
-- Be built and managed in an agile way
-- Utilise testing for ensuring robust code
+## Installation
+In a code editor, navigate to a directory where [Node.js](https://nodejs.dev/learn/how-to-install-nodejs) and [Node Package Manager](https://docs.npmjs.com/about-npm) (npm) are enabled.
 
-Remember, you only have a few days to code a solution, so being agile is key. That means brainstorming what you want to build, and working in sprints to deliver value each time. After each sprint, you can reassess and either continue on course or iterate towards a better solution. Have a plan which is incremental steps, rather than all or nothing.
+Then, in a bash or similar console, do:
+```
+git clone https://github.com/SchoolOfCode/w9_backend-project-room-21-1.git
+npm i
+```
 
-Click the link to see the [Project Guidelines](https://github.com/SchoolOfCode/project-guidelines/blob/master/project-week.md)
+## Preparing the database
+- Make a database in PostgreSQL and make a .env file to take the details.
+- The server expects a `PGHOST`, `PGDATABASE`, `PGUSER`, `PGPORT`, `PGPASSWORD` and `PGURI`.  These are your database credentials: *host*, *database*, *port*, *password* and *URI* respectively in a Heroku database.
+- We used Heroku - other databases may have different names for their credentials
+- It should look like this:
+```
+PGHOST: "aString"
+PGDATABASE: "aString1"
+PGUSER: "aString2"
+PGPORT: 9999
+PGPASSWORD: "aLongString"
+PGURI: "aReallyReallyReallyReallyReallyReallyReallyReallyReallyReallyLongString"
+```
+- Then, in your bash console, do:
+```
+npm run createProfilesTable
+npm run populateProfilesTable
+``` 
+- This will create and fill the table on the database with our starting data.
+
+## Operating the server
+- Enter `npm start` into the command line to get the server going.
+
+You can now use your frontend app. 
+
+

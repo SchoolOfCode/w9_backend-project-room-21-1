@@ -5,30 +5,47 @@ export async function getProfiles() {
     return response.rows;
 }
 
-export async function processTextQuery(textQuery) {
-    const lowerCase = textQuery.toLowerCase();
-    const processedText = `%${lowerCase}%`;
-    return processedText;
-}
-
-export async function processNumberQuery(numberQuery) {
-    const response = "";
-    if (numberQuery > 0) {
-        response = numberQuery;
-    } else if (numberQuery === 0) {
-        response = "";
+export function processTextQuery(property, value) {
+    const lowerCase = value.toLowerCase();
+    const response = `${property} LIKE %${lowerCase}%`;
+    return response;
+  }
+  
+export function processNumberQuery(property, value) {
+    let response = "";
+    if (value > 0) {
+        response = `${property} = ${value}`;
+    } else if (value === 0) {
+        response = "${property} = null";
     }
     return response;
 }
-
+  
+export function processFilters(filteredRequest) {
+    console.log("STARTED");
+    let conditions = [];
+    const keys = Object.keys(filteredRequest);
+    keys.forEach((key, index) => {
+      if (typeof filteredRequest[key] === 'string') {
+          conditions.push(processTextQuery(key, filteredRequest[key]));
+      } else if (typeof filteredRequest[key] === 'number') {
+          conditions.push(processNumberQuery(key, filteredRequest[key]));
+      }
+    });
+        
+    //return conditions
+    return conditions.join(" AND ");
+}
 export async function getFilteredProfiles(filteredRequest) {
-    const responseText = 'SELECT * FROM profiles WHERE ';
-    for (let i=0; i<filteredRequest.length; i++) {
-        responseText = responseText + filteredRequest[i] + 'AND';
-    }
-    const response = await pool.query(response.slice(0, -3));
+    console.log("Started!");
+    let responseText = 'SELECT * FROM profiles WHERE ';
+    //responseText = responseText + conditions.join(" AND ");
+    responseText = responseText + processFilters(filteredRequest);
+    console.log(responseText);
+    const response = await pool.query(responseText);
     return response.rows;
 }
+
 
 
 export async function getProfilesByRegion(region) {
