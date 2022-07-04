@@ -7,7 +7,7 @@ export async function getProfiles() {
 
 export function processTextQuery(property, value) {
     const lowerCase = value.toLowerCase();
-    const response = `${property} LIKE %${lowerCase}%`;
+    const response = `LOWER(${property}) LIKE '%${lowerCase}%'`;
     return response;
   }
   
@@ -21,26 +21,26 @@ export function processNumberQuery(property, value) {
     return response;
 }
   
-export function processFilters(filteredRequest) {
+export async function processFilters(filteredRequest) {
     console.log("STARTED");
     let conditions = [];
     const keys = Object.keys(filteredRequest);
+
     keys.forEach((key, index) => {
       if (typeof filteredRequest[key] === 'string') {
-          conditions.push(processTextQuery(key, filteredRequest[key]));
+        conditions.push(processTextQuery(key, filteredRequest[key]));
       } else if (typeof filteredRequest[key] === 'number') {
-          conditions.push(processNumberQuery(key, filteredRequest[key]));
+        conditions.push(processNumberQuery(key, filteredRequest[key]));
       }
     });
-        
-    //return conditions
+
     return conditions.join(" AND ");
 }
 export async function getFilteredProfiles(filteredRequest) {
     console.log("Started!");
     let responseText = 'SELECT * FROM profiles WHERE ';
-    //responseText = responseText + conditions.join(" AND ");
-    responseText = responseText + processFilters(filteredRequest);
+    const customText = await processFilters(filteredRequest);
+    responseText = responseText + customText;
     console.log(responseText);
     const response = await pool.query(responseText);
     return response.rows;

@@ -34,7 +34,7 @@ describe("GET function tests", () => {
     //ARRANGE
     const actual = processTextQuery("name", "Am Wyli");
     //ACT
-    const expected = "name LIKE %am wyli%";
+    const expected = "LOWER(name) LIKE '%am wyli%'";
     //ASSERT
     expect(actual).toEqual(expected);
   })
@@ -52,19 +52,30 @@ describe("GET function tests", () => {
   test("Check new functions: that processFilters gives me what I expect at this point", async () => {
     //ARRANGE
     const myFilteredRequest = {name: "Am Wyli", myno: 5};
-    const actual = processFilters(myFilteredRequest);
+    const actual = await processFilters(myFilteredRequest);
     //ACT
-    const expected = "name LIKE %am wyli% AND myno = 5";
+    const expected = "LOWER(name) LIKE '%am wyli%' AND myno = 5";
     //ASSERT
     expect(actual).toEqual(expected);
   } )
 
   test("Check new functions: that getFilteredProfiles on my details gives Sara Nader profile", async () => {
     //ARRANGE
-    const myFilteredRequest = {name: "Sara Nader", bootcampnumber: 6};
-    const actual = getFilteredProfiles(myFilteredRequest);
+    const myFilteredRequest = {bootcampnumber: 6, name: "Sara Nader"};
+    const actual = await getFilteredProfiles(myFilteredRequest);
     //ACT
-    const expected = []; 
+    const expected = [{
+      id: expect.any(Number),
+      bootcampnumber: 6,
+      name: expect.any(String),
+      region: expect.any(String),
+      jobtitle: expect.any(String),
+      pronouns: expect.any(String),
+      description: expect.any(String),
+      imagelink: expect.any(String),
+      contactinfo: expect.any(String)
+    }]; 
+    /*
     for(let i=0; i<actual.length; i++){
       expected.push({
         id: expect.any(Number),
@@ -77,6 +88,7 @@ describe("GET function tests", () => {
         imagelink: expect.any(String),
         contactinfo: expect.any(String)
       })}
+      */
     //ASSERT
     expect(actual).toEqual(expected);
   } )
