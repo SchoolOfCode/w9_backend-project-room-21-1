@@ -12,8 +12,9 @@ router.get("/", async function(req, res) {
     }
 })
 
-router.get("/", async function (req, res) {
+/*router.get("/", async function (req, res) {
     let result = {};
+    
     if (req.query.region !== undefined) {
         result = await getProfilesByRegion(req.query.region);
     } else if(req.query.name){
@@ -24,8 +25,9 @@ router.get("/", async function (req, res) {
     } else {
         result = await getProfiles();
     }
+    
     return res.json({ success: true, payload: result })
-});
+});*/
 
 
 export default router;

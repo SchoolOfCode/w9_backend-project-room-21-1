@@ -5,9 +5,23 @@ export async function getProfiles() {
     return response.rows;
 }
 
+function capitaliseFirst(string) {
+    string.charAt(0).toUpperCase();
+    console.log(string);
+    for (let i=1; i<string.length; i++) {
+        if (string.charAt(i-1) === "%" || string.charAt(i-1) === " ") {
+            let currentChar = string.charAt(i);
+            string.charAt(i) = currentChar.toUpperCase();           
+        }
+    }
+    console.log(string);
+    return string
+}
+
 export function processTextQuery(property, value) {
-    const lowerCase = value.toLowerCase();
-    const response = `LOWER(${property}) LIKE '%${lowerCase}%'`;
+    const correctFormat = capitaliseFirst(value.toLowerCase());
+    //const lowerCase = value.toLowerCase();
+    const response = `${property} LIKE '%${correctFormat}%'`;
     return response;
   }
   
@@ -27,10 +41,12 @@ export async function processFilters(filteredRequest) {
     const keys = Object.keys(filteredRequest);
 
     keys.forEach((key, index) => {
-      if (typeof filteredRequest[key] === 'string') {
-        conditions.push(processTextQuery(key, filteredRequest[key]));
-      } else if (typeof filteredRequest[key] === 'number') {
+        let requestValue = filteredRequest[key]
+        // Regex expression to see if the string should actually be a number
+      if (requestValue.match(/^[0-9]+$/)) {
         conditions.push(processNumberQuery(key, filteredRequest[key]));
+      } else if (typeof requestValue === 'string') {
+        conditions.push(processTextQuery(key, filteredRequest[key]));
       }
     });
 
@@ -39,8 +55,13 @@ export async function processFilters(filteredRequest) {
 export async function getFilteredProfiles(filteredRequest) {
     console.log("Started!");
     let responseText = 'SELECT * FROM profiles WHERE ';
-    const customText = await processFilters(filteredRequest);
-    responseText = responseText + customText;
+    if (filteredRequest === "") {
+        responseText = 'SELECT * FROM profiles';
+    } else {
+        const customText = await processFilters(filteredRequest);
+        responseText = responseText + customText;
+    }
+    
     console.log(responseText);
     const response = await pool.query(responseText);
     return response.rows;
