@@ -5,32 +5,32 @@ export async function getProfiles() {
     return response.rows;
 }
 
-function capitaliseFirst(string) {
-    string.charAt(0).toUpperCase();
-    console.log(string);
-    for (let i=1; i<string.length; i++) {
-        if (string.charAt(i-1) === "%" || string.charAt(i-1) === " ") {
-            let currentChar = string.charAt(i);
-            string.charAt(i) = currentChar.toUpperCase();           
-        }
+export function capitaliseFirst(words) {
+    let splitWords = words.split("%")
+    let newWords = "";
+    for (let i=0; i<splitWords.length; i++) {
+        newWords += splitWords[i][0].toUpperCase() + splitWords[i].slice(1) + " ";
     }
-    console.log(string);
-    return string
+    return newWords.slice(0, -1);
 }
 
 export function processTextQuery(property, value) {
-    const correctFormat = capitaliseFirst(value.toLowerCase());
-    //const lowerCase = value.toLowerCase();
-    const response = `${property} LIKE '%${correctFormat}%'`;
-    return response;
+    if(value === "any") {
+        return "(1=1)";
+    } else {
+        const lowerFormat = value.toLowerCase()
+        const capitalFormat = capitaliseFirst(lowerFormat);
+        const response = `(${property} LIKE '%${capitalFormat}%' OR ${property} LIKE '%${lowerFormat}%')`;
+        return response;
+    }
   }
   
 export function processNumberQuery(property, value) {
     let response = "";
     if (value > 0) {
-        response = `${property} = ${value}`;
-    } else if (value === 0) {
-        response = "${property} = null";
+        response = `(${property} = ${value})`;
+    } else if (value === '0') {
+        response = "(1=1)";
     }
     return response;
 }
@@ -53,15 +53,14 @@ export async function processFilters(filteredRequest) {
     return conditions.join(" AND ");
 }
 export async function getFilteredProfiles(filteredRequest) {
-    console.log("Started!");
+    console.log(filteredRequest);
     let responseText = 'SELECT * FROM profiles WHERE ';
-    if (filteredRequest === "") {
+    if (Object.keys(filteredRequest).length === 0) {
         responseText = 'SELECT * FROM profiles';
     } else {
         const customText = await processFilters(filteredRequest);
         responseText = responseText + customText;
     }
-    
     console.log(responseText);
     const response = await pool.query(responseText);
     return response.rows;

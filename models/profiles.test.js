@@ -3,8 +3,20 @@ import { getProfiles,
    processTextQuery,
    processNumberQuery,
    processFilters,
-   getFilteredProfiles }
+   getFilteredProfiles,
+  capitaliseFirst }
   from "./profiles.js";
+
+
+  test("Check if the capitaliseFirst function capitalises first word of string", () => {
+    //ARRANGE
+    const actual = capitaliseFirst("hello world")
+    //ACT
+    const expected = "Hello World";
+    //ASSERT
+    expect(actual).toEqual(expected);
+  })
+
 
 describe("GET function tests", () => {
   test("Check the structure of the payload, when sent a GET request for All profiles", async () => {
@@ -29,12 +41,14 @@ describe("GET function tests", () => {
     expect(actual).toEqual(expected);
   });
 
+
+
   test("Check new functions: that processTextQuery prepares a text response to put in a SQL query",
   async () => {
     //ARRANGE
-    const actual = processTextQuery("name", "Am Wyli");
+    const actual = processTextQuery("name", "am wyli");
     //ACT
-    const expected = "LOWER(name) LIKE '%am wyli%'";
+    const expected = "name LIKE '%Am Wyli%' OR name LIKE '%am wyli%'";
     //ASSERT
     expect(actual).toEqual(expected);
   })
@@ -54,7 +68,7 @@ describe("GET function tests", () => {
     const myFilteredRequest = {name: "Am Wyli", myno: 5};
     const actual = await processFilters(myFilteredRequest);
     //ACT
-    const expected = "LOWER(name) LIKE '%am wyli%' AND myno = 5";
+    const expected = "name LIKE '%Am Wyli%' OR name LIKE '%am wyli%' AND myno = 5";
     //ASSERT
     expect(actual).toEqual(expected);
   } )
@@ -75,7 +89,19 @@ describe("GET function tests", () => {
       imagelink: expect.any(String),
       contactinfo: expect.any(String)
     }]; 
-    /*
+    
+    //ASSERT
+    expect(actual).toEqual(expected);
+  } )
+
+
+
+
+
+});
+
+
+/*
     for(let i=0; i<actual.length; i++){
       expected.push({
         id: expect.any(Number),
@@ -89,12 +115,3 @@ describe("GET function tests", () => {
         contactinfo: expect.any(String)
       })}
       */
-    //ASSERT
-    expect(actual).toEqual(expected);
-  } )
-
-
-
-
-
-});
